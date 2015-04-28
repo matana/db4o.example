@@ -32,8 +32,21 @@ public class Application {
 		
 		queryPetByName(db, "Gizmo 2", true);
 		
+		deleteStudentByPetName(db, "Gizmo 1", true);
+
 		db.close();
 
+	}
+
+	private static void deleteStudentByPetName(ObjectContainer db, String name, boolean print) {
+		
+		List<Student> toDelete = queryPetByName(db, name, true);
+		
+		for (Student student : toDelete) 
+			db.delete(student);
+		db.commit();
+		
+		printResults(db.query(Student.class), "DELETE", "#Delete object (Student)");
 	}
 
 	/**
@@ -55,7 +68,7 @@ public class Application {
 			db.commit();
 		}
 		if(print)
-			printResults(result, "UPDATED", "#Update object");
+			printResults(result, "UPDATE", "#Update object (Student)");
 	}
 
 	/**
@@ -65,18 +78,16 @@ public class Application {
 	 * @param header
 	 */
 	private static void printResults(List<Student> result, String label, String header) {
-		String lines = "";
-		for (int i = 0; i < header.length(); i++) {
-			lines += "-";
-		}
-		System.out.println(lines);
-		System.out.println(header);
-		System.out.println(lines);
+		String line = "";
+		for (int i = 0; i < header.length(); i++) { line += "-"; }
+		System.out.printf("%s\n%s\n%s\n",line, header, line);
+		
 		if(result.isEmpty())
 			System.out.println(" > Nothing found...");
 		else
 			for (Student student : result)
 				System.out.printf(" > %s :: %s \n", label, student);
+		System.out.println();
 	}
 
 	/**
@@ -87,7 +98,7 @@ public class Application {
 	private static void queryByTargetType(ObjectContainer db, boolean print) {
 		ObjectSet<Student> result = db.query(Student.class);
 		if(print)
-			printResults(result, "DB.ENTRY", "#Query by TargetType");
+			printResults(result, "DB.ENTRY", "#Query by TargetType - db.query(Student.class)");
 	}
 	
 	/**
@@ -141,7 +152,7 @@ public class Application {
 		});
 		
 		if(print)
-			printResults(result, "FOUND", "#Native query with Predicate<ExtentType>");
+			printResults(result, "RESULT", "#Native query with Predicate<ExtentType> - db.query(new Predicate<Student>(){...});");
 		
 		return new ArrayList<Student>(result);
 	}
@@ -169,7 +180,7 @@ public class Application {
 		});
 		
 		if(print)
-			printResults(result, "FOUND", "#Native query with Predicate<ExtentType>");
+			printResults(result, "RESULT", "#Native query - find nested object (Pet) by 'name' attribute");
 		
 		return new ArrayList<Student>(result);
 	}
@@ -193,7 +204,7 @@ public class Application {
 		
 		ObjectSet<Student> result = q.execute();
 		
-		printResults(result, "FOUND", "#Query with constraints");
+		printResults(result, "RESULT", "#Query with constraints");
 	}
 	
 	/**
@@ -220,7 +231,7 @@ public class Application {
 		
 		ObjectSet<Student> result = q.execute();
 		
-		printResults(result, "FOUND", "#Query with constraints - sorted");
+		printResults(result, "RESULT", "#Query with constraints - sorted by 'name' attribute");
 		
 	}
 
