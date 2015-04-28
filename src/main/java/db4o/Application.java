@@ -22,13 +22,13 @@ public class Application {
 		
 		queryByTargetType(db, true);
 		
-		queryByPredicateAgeHigherThan(db, 25, true);
+		queryStudentByAgeHigherThan(db, 25, true);
 		
-		queryWithContraints(db, true);
+		queryStudentbyAgeAndForename(db, 25, "Stephi", true);
 		
-		queryWithContraintsSorted(db, 20, true);
+		queryStudentAgeSorted(db, 20, true);
 		
-		updateObject(db, true);
+		updateStudentByAgeHigherThan(db, 30, true);
 		
 		queryPetByName(db, "Gizmo 2", true);
 		
@@ -41,9 +41,9 @@ public class Application {
 	 * @param db
 	 * @param print
 	 */
-	private static void updateObject(ObjectContainer db, boolean print) {
+	private static void updateStudentByAgeHigherThan(ObjectContainer db, int age, boolean print) {
 
-		List<Student> result = queryByPredicateAgeHigherThan(db, 30, false);
+		List<Student> result = queryStudentByAgeHigherThan(db, age, false);
 		
 		int i = 1;
 		for (Student student : result) {
@@ -128,7 +128,7 @@ public class Application {
 	 * @param print
 	 * @return
 	 */
-	private static List<Student> queryByPredicateAgeHigherThan(ObjectContainer db, final int age, boolean print) {
+	private static List<Student> queryStudentByAgeHigherThan(ObjectContainer db, final int age, boolean print) {
 
 		ObjectSet<Student> result = db.query(new Predicate<Student>() {
 			
@@ -179,16 +179,16 @@ public class Application {
 	 * @param db
 	 * @param print
 	 */
-	private static void queryWithContraints(ObjectContainer db, boolean print) {
+	private static void queryStudentbyAgeAndForename(ObjectContainer db, int age, String forename, boolean print) {
 		
 		Query q = db.query();
 		q.constrain(new Student());
 		q.descend("age")
-			.constrain(25)
+			.constrain(age)
 			.greater()
 			.equal()
 			.and(q.descend("forename")
-					.constrain("Stephi")
+					.constrain(forename)
 					.startsWith(true));
 		
 		ObjectSet<Student> result = q.execute();
@@ -201,7 +201,7 @@ public class Application {
 	 * @param db
 	 * @param print
 	 */
-	private static void queryWithContraintsSorted(ObjectContainer db, int age, boolean print) {
+	private static void queryStudentAgeSorted(ObjectContainer db, int age, boolean print) {
 		
 		Query q = db.query();
 		q.constrain(new Student());
